@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jayanth SAP Doubts & Solutions</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #003366;
+    }
+    form {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+    }
+    button {
+      background: #003366;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    nav a {
+      margin: 10px;
+      text-decoration: none;
+      color: white;
+      background: #0059b3;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+    #loginForm, #doubtForm, #attendanceForm {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jayanth SAP Doubts & Solutions</h1>
+  <nav>
+    <a href="#" onclick="showForm('loginForm')">Login</a>
+    <a href="#" onclick="showForm('doubtForm')">Submit Doubt</a>
+    <a href="#" onclick="showForm('attendanceForm')">Mark Attendance</a>
+  </nav>
+
+  <form id="loginForm">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <p>Solve: <span id="captchaQuestion"></span></p>
+    <input type="text" id="captchaAnswer" placeholder="Enter answer" required />
+    <button type="button" onclick="handleLogin()">Login</button>
+  </form>
+
+  <form id="doubtForm">
+    <h2>Submit SAP Doubt</h2>
+    <input type="text" id="empIdDoubt" placeholder="Employee ID" required />
+    <textarea id="doubtText" placeholder="Describe your issue..." required></textarea>
+    <button type="button" onclick="submitDoubt()">Submit</button>
+  </form>
+
+  <form id="attendanceForm">
+    <h2>Mark Attendance</h2>
+    <input type="text" id="empIdAttendance" placeholder="Employee ID" required />
+    <button type="button" onclick="markAttendance()">Mark Present</button>
+  </form>
+
+  <script>
+    let correctCaptcha = 0;
+
+    function showForm(formId) {
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("doubtForm").style.display = "none";
+      document.getElementById("attendanceForm").style.display = "none";
+      document.getElementById(formId).style.display = "block";
+      if (formId === "loginForm") generateCaptcha();
+    }
+
+    function generateCaptcha() {
+      const a = Math.floor(Math.random() * 10);
+      const b = Math.floor(Math.random() * 10);
+      correctCaptcha = a + b;
+      document.getElementById("captchaQuestion").innerText = `${a} + ${b} = ?`;
+    }
+
+    function handleLogin() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const captchaAnswer = parseInt(document.getElementById("captchaAnswer").value);
+
+      if (captchaAnswer === correctCaptcha) {
+        alert("Login successful!");
+        localStorage.setItem("username", username);
+        showForm("doubtForm");
+      } else {
+        alert("Captcha incorrect. Try again.");
+        generateCaptcha();
+      }
+    }
+
+    function submitDoubt() {
+      const empId = document.getElementById("empIdDoubt").value;
+      const doubt = document.getElementById("doubtText").value;
+      const doubts = JSON.parse(localStorage.getItem("doubts") || "[]");
+      doubts.push({ empId, doubt });
+      localStorage.setItem("doubts", JSON.stringify(doubts));
+      alert("Doubt submitted successfully!");
+      document.getElementById("doubtForm").reset();
+    }
+
+    function markAttendance() {
+      const empId = document.getElementById("empIdAttendance").value;
+      const attendance = JSON.parse(localStorage.getItem("attendance") || "[]");
+      attendance.push({ empId, date: new Date().toLocaleDateString() });
+      localStorage.setItem("attendance", JSON.stringify(attendance));
+      alert("Attendance marked successfully!");
+      document.getElementById("attendanceForm").reset();
+    }
+
+    // Initialize default view
+    showForm("loginForm");
+  </script>
+</body>
+</html>
